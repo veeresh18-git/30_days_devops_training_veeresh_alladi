@@ -1,3 +1,4 @@
 Hi testing my git commits
 Making changes in feature branch
-testing 3rd line
+testing third line 
+
