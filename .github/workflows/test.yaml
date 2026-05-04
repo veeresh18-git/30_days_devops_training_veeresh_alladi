@@ -18,6 +18,7 @@ jobs:
 
       - name: debug
         run: ls -lr
-
+        
       - name: Run Python file
-        run: python3 test2.py
+        run: python3 30_days_devops_training_veeresh_alladi-main/Day_2/test2.py
+
