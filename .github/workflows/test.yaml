@@ -16,5 +16,8 @@ jobs:
       - name: Run a script
         run: echo "Build Successful!"
 
+      - name: debug
+        run: ls -lr
+
       - name: Run Python file
         run: python3 test2.py
