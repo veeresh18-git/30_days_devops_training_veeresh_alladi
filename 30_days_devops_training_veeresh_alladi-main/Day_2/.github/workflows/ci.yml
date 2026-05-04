@@ -17,4 +17,4 @@ jobs:
         run: echo "Build Successful!"
 
       - name: Run Python file
-        run: python3 test.py
+        run: python3 test2.py
