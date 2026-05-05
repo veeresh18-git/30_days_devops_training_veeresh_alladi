@@ -120,8 +120,15 @@ jobs:
   post-deploy:
      runs-on:
 
+DAY -3:
+--------
 Linux :
 -------------
+01-fundamentals
+02-linux-structure
+03-linux-distributions
+04-setup
+05-package-manager
 # Core components of a Linux Machine
 
 ```plaintext
