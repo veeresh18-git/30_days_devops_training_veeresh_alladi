@@ -207,3 +207,149 @@
 *   Azure networking basics
 
 ***
+
+
+senior level interview questions
+
+***
+
+# 🔥 1. System Design (VERY IMPORTANT)
+
+👉 Most candidates fail here.
+
+### Missing Questions:
+
+*   Design a **highly available system (end-to-end)**
+*   Design **rate limiting system**
+*   Design **CI/CD pipeline for microservices**
+*   Design **logging/monitoring architecture**
+*   How would you design **zero-downtime deployment?**
+*   How will you design **multi-region failover?**
+
+### Interview Expectation:
+
+> They want architecture thinking, not tools.
+
+***
+
+# 🔥 2. Production & Incident Handling (SRE Core)
+
+👉 This is CRITICAL for SRE roles.
+
+### Missing Questions:
+
+*   Walk me through a **production incident you handled**
+*   What is your **incident response process?**
+*   How do you perform **RCA (Root Cause Analysis)?**
+*   What is **Postmortem and how do you write it?**
+*   What is **SLA, SLO, SLI?**
+*   How do you **reduce MTTR?**
+*   What is **error budget?**
+
+***
+
+# 🔥 3. Security (Often Asked, Missing)
+
+### Missing Questions:
+
+*   How do you secure:
+    *   Kubernetes cluster?
+    *   CI/CD pipeline?
+*   What is **RBAC in Kubernetes?**
+*   How do you manage **secrets securely?**
+*   How do you prevent **secret leaks in Git?**
+*   What is **IAM least privilege principle?**
+*   Difference between:
+    *   TLS vs SSL
+    *   OAuth vs JWT
+
+***
+
+# 🔥 4. Kubernetes Advanced (Some Gaps)
+
+You covered basics well, but missing:
+
+*   What is **etcd and how backup works?**
+*   What is **CNI (Container Network Interface)?**
+*   How does **kube-proxy work internally?**
+*   What is **HPA vs VPA vs Cluster Autoscaler?**
+*   What is **PodDisruptionBudget?**
+*   What is **DaemonSet vs StatefulSet?**
+*   What is **NetworkPolicy?**
+
+***
+
+# 🔥 5. CI/CD Advanced
+
+Missing practical depth:
+
+*   Blue-Green vs Canary vs Rolling (deep comparison)
+*   How do you secure pipelines?
+*   How do you implement:
+    *   **Approval gates**
+    *   **Rollback automation**
+*   GitOps vs CI/CD difference
+*   How ArgoCD works internally
+
+***
+
+# 🔥 6. Observability Deep Dive
+
+You covered basics, but not depth:
+
+*   What is **Golden Signals?**
+*   What is **RED method / USE method?**
+*   Difference:
+    *   Alerting vs Monitoring
+*   How to design **alerting strategy**
+*   How to avoid alert fatigue (very important)
+
+***
+
+# 🔥 7. Cloud (AWS/Azure Real Depth Missing)
+
+### Missing AWS:
+
+*   VPC design architecture (real-world)
+*   ELB types: ALB vs NLB
+*   Route53 routing policies
+*   Disaster recovery strategies:
+    *   Pilot light
+    *   Warm standby
+
+### Missing Azure:
+
+*   Azure networking (VNet, NSG)
+*   Azure DevOps pipelines
+*   Managed identity
+*   Key Vault
+
+***
+
+# 🔥 8. Performance & Scalability
+
+*   How do you debug:
+    *   memory leak?
+    *   latency issue?
+*   Difference:
+    *   horizontal vs vertical scaling (deep)
+*   How to handle:
+    *   traffic spike
+    *   DDoS (basic level)
+
+***
+
+# 🔥 9. Database / State Management (BIG GAP)
+
+👉 This is often asked and missing.
+
+*   SQL vs NoSQL
+*   Indexing basics
+*   Read replicas vs sharding
+*   DB backup strategies
+*   Handling DB bottlenecks
+
+
+
+
+
