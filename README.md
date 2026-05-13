@@ -397,6 +397,98 @@ One service becomes bottleneck
 Latency issue only in production
 
 
+👉 Add questions like:
+
+
+If Ingress works but Service fails, what next?
+
+
+If:
+
+Pod ✅ Running
+Logs ✅ Clean
+CPU ✅ Normal
+👉 Where do you check next?
+
+
+
+DB slow only during peak hours → how to debug?
+
+
+🔥 2. Missing “Decision-Making Questions”
+👉 Very important for senior roles.
+Add:
+
+How do you decide:
+
+Monolith vs Microservices?
+Kubernetes vs ECS vs VM?
+
+
+When do you:
+
+NOT use Terraform?
+NOT use Docker?
+
+
+Cost vs Performance trade-offs
+
+
+💡 Interview expectation:
+
+Not correct answer — but how you THINK
+
+
+🔥 3. Missing “Failure Injection Thinking” (Advanced SRE)
+👉 This is next-level SRE
+Add:
+
+How do you test system resilience?
+What is Chaos Engineering?
+Have you used:
+
+Chaos Monkey?
+Fault injection?
+
+
+
+
+🔥 4. Missing “Runbooks / Automation”
+👉 Real SRE work
+Add:
+
+How do you create runbooks?
+What should a good runbook contain?
+How do you automate incident recovery?
+
+
+🔥 5. Missing “Real Ownership Questions”
+👉 These are asked a lot in 5–8 yrs roles
+
+What systems do you OWN?
+What happens if:
+
+your service goes down?
+
+
+How do you track reliability?
+
+
+🔥 6. Missing “Metrics-Driven Thinking”
+You added observability, but not:
+
+What metrics decide:
+
+scaling?
+alerting?
+
+
+Business vs system metrics
+What would you alert on for:
+
+API service?
+
+
 
 
 
