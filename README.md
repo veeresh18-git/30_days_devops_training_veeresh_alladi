@@ -350,6 +350,53 @@ You covered basics, but not depth:
 *   Handling DB bottlenecks
 
 
+🔥 1. Production Incidents
+
+App down but pods are running ✅ what next?
+DB latency increased suddenly ✅ how to debug?
+Sudden spike in 5xx errors ✅ steps?
+Deployment succeeded but app broken ✅ why?
+
+
+🔥 2. Debugging Unknown Issues
+
+Logs ✅ OK
+CPU ✅ OK
+Memory ✅ OK
+👉 Then what?
+
+👉 This is where most fail.
+
+🔥 3. Multi-layer Troubleshooting
+Example:
+
+User → Load Balancer → Ingress → Service → Pod → DB
+
+👉 Where is the failure?
+
+🔥 4. Trade-off Questions
+
+Why Kubernetes vs ECS?
+Why Terraform vs CloudFormation?
+When NOT to use microservices?
+When NOT to use Docker?
+
+
+🔥 5. “Tell Me About a Time…” (Behavioral + Tech)
+
+Tell me about a production outage
+Tell me about a failed deployment
+Tell me about a mistake you made
+
+👉 These are make-or-break questions
+
+🔥 6. Scale / Performance Scenarios
+
+Traffic increased 10x overnight
+One service becomes bottleneck
+Latency issue only in production
+
+
 
 
 
