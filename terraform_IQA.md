@@ -461,5 +461,3 @@ Always say:
 Example:
 
 > “In production, we store Terraform state in versioned S3 with DynamoDB locking to prevent concurrent corruption.”
-
-That instantly sounds senior.
