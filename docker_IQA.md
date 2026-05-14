@@ -703,3 +703,421 @@ Useful for incident recovery.
 “`docker save` is for **images**, preserving layers and metadata.
 `docker export` is for **containers**, exporting only filesystem state.”
 
+
+
+---
+
+# Docker Networking Questions
+
+---
+
+# 1. What networking modes are available in Docker?
+
+**Answer:**
+
+Docker supports these main network drivers:
+
+1. **bridge** (default)
+2. **host**
+3. **none**
+4. **overlay**
+5. **macvlan**
+
+Check:
+
+```bash
+docker network ls
+```
+
+---
+
+# 2. What is bridge network?
+
+**Answer:**
+
+“Default Docker network. Containers communicate using internal private IPs.”
+
+Example:
+
+```bash
+docker run -d --name app1 nginx
+docker run -it ubuntu ping app1
+```
+
+Typical subnet:
+
+```text
+172.17.0.x
+```
+
+Used for:
+
+* single-host apps
+* local microservices
+
+---
+
+# 3. What is host network?
+
+Command:
+
+```bash
+docker run --network host nginx
+```
+
+**Answer:**
+
+“Container shares host network namespace.”
+
+Meaning:
+
+* no separate container IP
+* uses host ports directly
+
+Benefits:
+
+* better performance
+* low latency
+
+Use case:
+
+* monitoring agents like [Prometheus Node Exporter](https://prometheus.io/docs/guides/node-exporter/?utm_source=chatgpt.com)
+* packet capture
+
+Risk:
+
+* reduced isolation
+
+---
+
+# 4. What is none network?
+
+```bash
+docker run --network none ubuntu
+```
+
+No network access.
+
+Used for:
+
+* batch jobs
+* security-sensitive workloads
+
+---
+
+# 5. What is overlay network?
+
+**Answer:**
+
+Used in Docker Swarm / multi-host setups.
+
+Example:
+Host1 container talks to Host2 container.
+
+Used in:
+
+* multi-node clusters
+* service mesh patterns
+
+---
+
+# 6. What is macvlan?
+
+Gives container its own LAN IP.
+
+Example:
+
+```text
+Container -> 192.168.1.50
+```
+
+Use cases:
+
+* legacy apps
+* appliances needing real IP
+
+---
+
+# 7. How do containers communicate?
+
+On same network:
+
+```bash
+docker network create app-net
+
+docker run --network app-net --name db mysql
+docker run --network app-net app
+```
+
+App connects:
+
+```text
+mysql://db:3306
+```
+
+Use container name as DNS.
+
+---
+
+# 8. Port mapping vs expose
+
+```dockerfile
+EXPOSE 8080
+```
+
+Only documentation.
+
+Publish:
+
+```bash
+docker run -p 8080:8080 app
+```
+
+Host can access.
+
+---
+
+# 9. How to inspect Docker network?
+
+```bash
+docker network inspect bridge
+```
+
+Shows:
+
+* subnet
+* gateway
+* connected containers
+
+Used during debugging.
+
+---
+
+# 10. Container cannot talk to another container — what do you do?
+
+Checklist:
+
+```bash
+docker network ls
+docker network inspect
+docker exec -it app ping db
+```
+
+Check:
+
+* same network?
+* DNS?
+* firewall?
+* app port listening?
+
+---
+
+---
+
+# Docker Volume Questions
+
+---
+
+# 11. What is a Docker volume?
+
+**Answer:**
+
+“A volume persists data outside container lifecycle.”
+
+Without volume:
+container deleted = data lost.
+
+With volume:
+data survives.
+
+---
+
+# 12. Why use volumes?
+
+For:
+
+* databases
+* logs
+* uploads
+* shared config
+
+Example:
+
+```bash
+docker run -v mysql-data:/var/lib/mysql mysql
+```
+
+---
+
+# 13. Bind mount vs volume
+
+### Bind mount
+
+```bash
+-v /host/data:/app/data
+```
+
+Uses host path.
+
+Good for:
+
+* development
+* config files
+
+---
+
+### Named volume
+
+```bash
+-v myvolume:/app/data
+```
+
+Managed by Docker.
+
+Good for:
+
+* production
+
+---
+
+Interview line:
+“Bind mounts expose host paths; named volumes are safer and portable.”
+
+---
+
+# 14. List volumes
+
+```bash
+docker volume ls
+```
+
+Inspect:
+
+```bash
+docker volume inspect myvolume
+```
+
+---
+
+# 15. Delete unused volumes
+
+```bash
+docker volume prune
+```
+
+Use when:
+host disk full.
+
+Be careful.
+
+---
+
+# 16. Share volume between containers
+
+Example:
+
+```bash
+docker run -v shared:/data app1
+docker run -v shared:/data app2
+```
+
+Both access same data.
+
+Use case:
+
+* logs
+* sidecars
+
+---
+
+# 17. Data lost after restart — why?
+
+Usually forgot volume.
+
+Wrong:
+
+```bash
+docker run mysql
+```
+
+Correct:
+
+```bash
+docker run -v mysql-data:/var/lib/mysql mysql
+```
+
+---
+
+# 18. Backup Docker volume
+
+Backup:
+
+```bash
+docker run --rm \
+-v myvolume:/data \
+-v $(pwd):/backup \
+ubuntu tar czf /backup/backup.tar.gz /data
+```
+
+Restore:
+
+```bash
+tar xzf
+```
+
+Good interview point.
+
+---
+
+# 19. Where are volumes stored?
+
+On Linux:
+
+```text
+/var/lib/docker/volumes/
+```
+
+Check:
+
+```bash
+docker volume inspect myvolume
+```
+
+---
+
+# 20. Real-world volume issue you solved?
+
+“One MySQL container kept losing data after restart. Root cause: container started without volume mount. I recreated it with a named volume and added it to our Docker Compose file.”
+
+Strong real-world answer.
+
+---
+
+# Rapid-fire answers
+
+**Q: Can multiple containers use same volume?**
+Yes.
+
+**Q: Does deleting container delete volume?**
+No, unless `-v` used with remove.
+
+```bash
+docker rm -v container
+```
+
+---
+
+**Q: Can I mount file instead of folder?**
+Yes:
+
+```bash
+-v /host/app.conf:/app/app.conf
+```
+
+---
+
+**Q: Best practice for DB?**
+Use named volumes + backups.
+
+---
+
