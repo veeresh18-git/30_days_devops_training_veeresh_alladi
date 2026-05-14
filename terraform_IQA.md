@@ -1,6 +1,6 @@
 ---
 
-# 1. `for_each` vs `count` (you wrote “for vs for”; in Terraform this is usually `for_each` vs `count`)
+# 1. `for_each` vs `count` (Terraform this is usually `for_each` vs `count`)
 
 This is a very common interview question.
 
