@@ -1,5 +1,703 @@
 ---
 
+# 1. What is Terraform?
+
+Terraform is an IaC (**Infrastructure as Code**) tool by [HashiCorp](https://www.hashicorp.com/?utm_source=chatgpt.com) used to **provision and manage infrastructure declaratively**.
+
+Examples:
+
+* Create Amazon Web Services EC2
+* Create Microsoft Azure VMs
+* Create Google Cloud resources
+* Kubernetes clusters
+
+**Benefits**
+
+* version control
+* reusable
+* automated
+* consistent infra
+
+---
+
+# 2. Imperative vs Declarative
+
+### Imperative:
+
+"Do this, then this"
+
+Example:
+
+```bash
+aws ec2 run-instances ...
+```
+
+### Declarative:
+
+"Desired state"
+
+```hcl
+resource "aws_instance" "web" {
+  ami = "ami-123"
+}
+```
+
+Terraform ensures desired state.
+
+---
+
+# 3. Terraform lifecycle (very important)
+
+```text
+Write code → init → plan → apply → destroy
+```
+
+### terraform init
+
+Downloads providers/plugins.
+
+Example:
+
+```bash
+terraform init
+```
+
+---
+
+### terraform plan
+
+Shows execution plan.
+
+```bash
+terraform plan
+```
+
+Output:
+
+```text
++ create
+~ update
+- destroy
+```
+
+---
+
+### terraform apply
+
+Executes changes.
+
+```bash
+terraform apply
+```
+
+---
+
+### terraform destroy
+
+Deletes resources.
+
+```bash
+terraform destroy
+```
+
+---
+
+# 4. Provider
+
+Provider = plugin to talk to cloud.
+
+Examples:
+
+* Amazon Web Services
+* Microsoft Azure
+* Google Cloud
+* Kubernetes
+
+Example:
+
+```hcl
+provider "aws" {
+  region = "ap-south-1"
+}
+```
+
+Interview:
+**Q:** What happens during init?
+**A:** Downloads provider binaries and initializes backend.
+
+---
+
+# 5. Resource vs Data Source (important)
+
+## Resource
+
+Creates/manages infra.
+
+```hcl
+resource "aws_s3_bucket" "demo" {}
+```
+
+Creates bucket.
+
+---
+
+## Data Source
+
+Reads existing infra.
+
+```hcl
+data "aws_vpc" "default" {
+  default = true
+}
+```
+
+Reads existing VPC.
+
+Interview answer:
+Resource = create/manage
+Data source = fetch/read
+
+---
+
+# 6. Variables
+
+Used for dynamic values.
+
+```hcl
+variable "region" {
+  default = "ap-south-1"
+}
+```
+
+Use:
+
+```hcl
+region = var.region
+```
+
+Pass:
+
+```bash
+terraform apply -var="region=us-east-1"
+```
+
+---
+
+# 7. Outputs
+
+Expose values.
+
+```hcl
+output "ip" {
+ value = aws_instance.web.public_ip
+}
+```
+
+Useful in CI/CD.
+
+---
+
+# 8. State file (most asked)
+
+File:
+
+```text
+terraform.tfstate
+```
+
+Stores:
+
+* current infra state
+* resource IDs
+* metadata
+
+Why needed?
+Terraform compares:
+
+```text
+Desired code vs Actual state
+```
+
+Interview:
+Without state → Terraform doesn't know what exists.
+
+---
+
+# 9. Should state be in Git?
+
+NO.
+
+Why?
+Contains:
+
+* secrets
+* resource IDs
+* drift risks
+* conflicts
+
+Use remote backend.
+
+---
+
+# 10. Remote backend
+
+Example: Amazon S3 + Amazon DynamoDB
+
+```hcl
+terraform {
+ backend "s3" {
+   bucket = "tf-state"
+   key    = "prod.tfstate"
+   region = "ap-south-1"
+   dynamodb_table = "tf-lock"
+ }
+}
+```
+
+Benefits:
+
+* shared
+* versioning
+* locking
+
+---
+
+# 11. State locking (very important)
+
+Problem:
+Two engineers run apply simultaneously.
+
+Issue:
+State corruption.
+
+Solution:
+DynamoDB lock.
+
+Interview:
+How avoid concurrent updates?
+Answer:
+Use remote backend + locking.
+
+---
+
+# 12. Terraform refresh / drift
+
+Drift = manual change outside Terraform.
+
+Example:
+Delete EC2 manually.
+
+Check:
+
+```bash
+terraform plan
+```
+
+Detects drift.
+
+---
+
+# 13. terraform import
+
+Existing infra → Terraform
+
+Example:
+
+```bash
+terraform import aws_instance.web i-12345
+```
+
+Real-time:
+Legacy infra onboarding.
+
+---
+
+# 14. taint / replace
+
+Force recreation.
+
+Old:
+
+```bash
+terraform taint aws_instance.web
+```
+
+New:
+
+```bash
+terraform apply -replace=aws_instance.web
+```
+
+---
+
+# 15. count vs for_each
+
+## count
+
+Numeric.
+
+```hcl
+count = 3
+```
+
+Creates 3 instances.
+
+---
+
+## for_each
+
+Map/list based.
+
+```hcl
+for_each = toset(["dev","qa"])
+```
+
+Better when names matter.
+
+Interview:
+Why prefer for_each?
+Stable identity.
+
+---
+
+# 16. Modules (must know)
+
+Reusable code.
+
+Example:
+
+```text
+modules/
+   ec2/
+   vpc/
+```
+
+Call:
+
+```hcl
+module "vpc" {
+ source = "./modules/vpc"
+}
+```
+
+Benefits:
+
+* reuse
+* standardization
+
+---
+
+# 17. Workspaces
+
+Used for environments.
+
+```bash
+terraform workspace new dev
+terraform workspace new prod
+```
+
+Separate states.
+
+Good for:
+dev/qa/prod
+
+---
+
+# 18. Depends_on
+
+Explicit dependency.
+
+```hcl
+depends_on = [aws_vpc.main]
+```
+
+Use when implicit dependency fails.
+
+---
+
+# 19. Null resource
+
+Runs scripts.
+
+```hcl
+resource "null_resource" "test" {
+ provisioner "local-exec" {
+   command = "echo hello"
+ }
+}
+```
+
+Use sparingly.
+
+---
+
+# 20. Provisioners (not preferred)
+
+Types:
+
+* local-exec
+* remote-exec
+
+Used post-create.
+
+Avoid when possible.
+
+Prefer:
+[cloud-init/user-data docs](https://cloudinit.readthedocs.io/?utm_source=chatgpt.com)
+
+---
+
+# 21. Backend vs Provider
+
+Interview trap.
+
+Backend:
+Where state stored.
+
+Provider:
+Who creates infra.
+
+Example:
+S3 backend + AWS provider.
+
+---
+
+# 22. Sensitive variables
+
+```hcl
+variable "password" {
+ sensitive = true
+}
+```
+
+Hide output.
+
+Use:
+[HashiCorp Vault](https://www.vaultproject.io/?utm_source=chatgpt.com) or secrets manager.
+
+---
+
+# 23. Terraform fmt
+
+Format code.
+
+```bash
+terraform fmt
+```
+
+Always run.
+
+---
+
+# 24. Validate
+
+Syntax check.
+
+```bash
+terraform validate
+```
+
+---
+
+# 25. Graph
+
+Dependency graph.
+
+```bash
+terraform graph
+```
+
+Debug dependencies.
+
+---
+
+# Real-time Scenario Questions
+
+---
+
+## Scenario 1:
+
+State file deleted. What do you do?
+
+Answer:
+
+* recover from S3 versioning
+* restore backup
+* if not available → import resources
+
+---
+
+## Scenario 2:
+
+Someone changed infra manually.
+
+Answer:
+Drift.
+Run:
+
+```bash
+terraform plan
+```
+
+---
+
+## Scenario 3:
+
+Apply failed midway.
+
+Answer:
+State partially updated.
+Check:
+
+```bash
+terraform state list
+terraform plan
+```
+
+Then reapply.
+
+---
+
+## Scenario 4:
+
+Need same infra in dev/prod.
+
+Answer:
+Use:
+
+* modules
+* workspaces
+* separate tfvars
+
+---
+
+## Scenario 5:
+
+Secrets in code.
+
+Wrong:
+
+```hcl
+password="abc123"
+```
+
+Right:
+
+* env vars
+* Vault
+* secrets manager
+
+---
+
+# Common interview traps
+
+### Q: Does Terraform create resources sequentially?
+
+No.
+Parallel by default.
+
+---
+
+### Q: Can Terraform rollback?
+
+No native rollback.
+
+Use:
+Git revert + apply.
+
+---
+
+### Q: Can one resource have multiple providers?
+
+Yes using aliases.
+
+Example:
+
+```hcl
+provider "aws" {
+ alias="west"
+}
+```
+
+---
+
+### Q: What is OpenTofu?
+
+[OpenTofu](https://opentofu.org/?utm_source=chatgpt.com) is open-source fork of Terraform after HashiCorp license change.
+
+---
+
+# Hands-on must practice
+
+Build:
+
+1. VPC
+2. subnet
+3. EC2
+4. SG
+5. S3
+6. remote backend
+7. module
+8. workspace
+
+Commands:
+
+```bash
+terraform init
+terraform fmt
+terraform validate
+terraform plan
+terraform apply
+terraform state list
+terraform output
+terraform destroy
+```
+
+---
+
+# Interview one-liners
+
+**What is Terraform?**
+Declarative IaC tool.
+
+**State file?**
+Tracks infra.
+
+**Module?**
+Reusable code block.
+
+**Backend?**
+Stores state.
+
+**Provider?**
+Cloud plugin.
+
+**count vs for_each?**
+Number vs key-based.
+
+**Import?**
+Bring existing infra.
+
+**Drift?**
+Manual infra change.
+
+**Locking?**
+Avoid concurrent changes.
+
+---
+
+
+* [Terraform Cloud](https://app.terraform.io/?utm_source=chatgpt.com)
+* policy as code ([Sentinel](https://developer.hashicorp.com/sentinel?utm_source=chatgpt.com))
+* CI/CD with [GitHub Actions](https://github.com/features/actions?utm_source=chatgpt.com) / [Jenkins](https://www.jenkins.io/?utm_source=chatgpt.com)
+* multi-account AWS
+* reusable module design
+* zero-downtime infra changes
+
+
+
+
+
 # 1. `for_each` vs `count` (Terraform this is usually `for_each` vs `count`)
 
 This is a very common interview question.
