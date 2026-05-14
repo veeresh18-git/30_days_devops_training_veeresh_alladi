@@ -2,7 +2,7 @@
 
 # 1. What is Terraform?
 
-Terraform is an IaC (**Infrastructure as Code**) tool by [HashiCorp](https://www.hashicorp.com/?utm_source=chatgpt.com) used to **provision and manage infrastructure declaratively**.
+Terraform is an IaC (**Infrastructure as Code**) tool by  used to **provision and manage infrastructure declaratively**.
 
 Examples:
 
