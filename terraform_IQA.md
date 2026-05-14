@@ -466,18 +466,7 @@ Example:
 
 HANDS_ON
 
-Perfect — this is **core Terraform interview territory**, and I’ll answer this exactly like a **hands‑on DevOps / SRE with 8+ years of real production experience**, not theory.
-
-I’ll give you:
-
-*   ✅ **Concept**
-*   ✅ **Hands‑on examples**
-*   ✅ **Production decisions**
-*   ✅ **Interview-ready wording**
-
-***
-
-# ✅ Terraform – Hands‑On Senior‑Level Answers (8+ YOE)
+Perfect — this is **core Terraform interview territory**
 
 ***
 
