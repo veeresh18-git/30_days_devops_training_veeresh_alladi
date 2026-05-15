@@ -1,0 +1,200 @@
+Use this as your **final interview checklist (checkpoints)** for this JPMorgan SRE III role.
+
+---
+
+# 1. Self Intro (must memorize)
+
+☐ 2-minute “Tell me about yourself”
+☐ Current role impact (Tungsten)
+☐ Previous roles summary (Verizon + TCS)
+☐ Why switching?
+☐ Why [JPMorgan Chase](https://www.jpmorganchase.com/?utm_source=chatgpt.com)?
+
+---
+
+# 2. Resume Deep Dive
+
+Be ready for every line in your resume.
+
+☐ EKS cluster build using Terraform
+☐ Logz.io/OpenTelemetry observability setup
+☐ GitHub Actions / GitLab CI pipelines
+☐ Python automation example
+☐ Incident.io migration
+☐ Kubernetes deployment story
+☐ One failure + learning story
+
+---
+
+# 3. SRE Fundamentals
+
+☐ SLA vs SLO vs SLI
+☐ Error budget
+☐ MTTR / MTTD
+☐ Golden signals
+☐ White-box vs Black-box monitoring
+☐ RCA / Postmortem process
+☐ Alert fatigue reduction
+☐ On-call handling
+
+---
+
+# 4. Kubernetes (high priority)
+
+☐ Pod lifecycle
+☐ Deployment vs StatefulSet vs DaemonSet
+☐ Service types (ClusterIP/NodePort/LoadBalancer)
+☐ Ingress
+☐ ConfigMap vs Secret
+☐ Liveness vs Readiness probes
+☐ HPA
+☐ Resource limits/requests
+☐ Troubleshooting CrashLoopBackOff
+☐ Troubleshooting Pending pod
+
+Commands:
+
+```bash
+kubectl get pods
+kubectl describe pod
+kubectl logs
+kubectl exec
+```
+
+---
+
+# 5. Terraform (high priority)
+
+☐ init / plan / apply / destroy
+☐ state file purpose
+☐ remote backend (S3)
+☐ state locking (DynamoDB)
+☐ drift detection
+☐ import
+☐ taint / replace
+☐ modules
+☐ variables / outputs
+☐ resource vs data source
+
+---
+
+# 6. AWS
+
+☐ VPC basics
+☐ public vs private subnet
+☐ security group vs NACL
+☐ EC2
+☐ ALB/NLB
+☐ IAM roles/policies
+☐ S3
+☐ CloudWatch
+☐ Auto Scaling
+☐ EKS basics
+
+Scenario:
+☐ “App down in AWS — how to troubleshoot?”
+
+---
+
+# 7. Observability
+
+☐ Metrics / Logs / Traces
+☐ Prometheus architecture Prometheus
+☐ Grafana dashboards Grafana
+☐ OpenTelemetry basics OpenTelemetry
+☐ Alert rules
+☐ Dashboard design
+
+---
+
+# 8. CI/CD
+
+☐ pipeline stages
+☐ rollback strategy
+☐ secrets handling
+☐ blue-green
+☐ canary
+☐ Git branching strategy
+
+Tools:
+GitHub Actions
+GitLab
+Jenkins
+
+---
+
+# 9. Python / Automation
+
+☐ basic syntax
+☐ file handling
+☐ loops/functions
+☐ API call example
+☐ one real automation story
+
+Possible:
+“write script for disk usage alert”
+
+---
+
+# 10. Linux / Networking
+
+☐ top / ps / netstat / ss
+☐ grep / awk / sed
+☐ systemctl
+☐ curl
+☐ ping
+☐ traceroute
+☐ DNS flow
+☐ TCP handshake
+☐ HTTP status codes
+
+---
+
+# 11. Incident Story (very important)
+
+Prepare 1 strong example:
+☐ What happened?
+☐ Impact?
+☐ Your action?
+☐ Fix?
+☐ RCA?
+☐ Prevention?
+
+Use STAR format.
+
+---
+
+# 12. Behavioral
+
+☐ conflict with teammate
+☐ leadership example
+☐ pressure handling
+☐ biggest failure
+☐ mentoring story
+
+---
+
+# 13. Questions to ask interviewer
+
+Prepare 3:
+
+* “What does success look like in first 90 days?”
+* “How is on-call structured?”
+* “Biggest reliability challenges today?”
+
+---
+
+# Last 30 mins before interview
+
+☐ Review intro
+☐ Review 3 project stories
+☐ Review SLO/SLI/SLA
+☐ Review Terraform state
+☐ Review K8s troubleshooting
+☐ Water + calm + smile
+
+---
+
+**Golden rule:**
+Every answer = **Concept + Your real example + impact**.
+That’s how you sound like an experienced SRE, not someone reciting definitions.
