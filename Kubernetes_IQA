@@ -1,0 +1,130 @@
+1. Kubernetes Architecture (must know)
+5
+Questions:
+Explain Kubernetes architecture.
+What happens when you run kubectl apply?
+Role of:
+API Server
+etcd
+Scheduler
+Controller Manager
+Kubelet
+kube-proxy
+What happens if etcd goes down?
+How does leader election work in control plane?
+
+Interviewer checks: internals understanding.
+
+2. Pods & Scheduling
+Questions:
+How does scheduler choose a node?
+What is Pod lifecycle?
+Difference:
+init container
+sidecar container
+What is static pod?
+Pod stuck in Pending — how debug?
+What causes Evicted pod?
+What is pod disruption budget?
+
+Real answer example:
+“Pod Pending usually means resource shortage, taints, affinity issue, or PVC not bound.”
+
+3. Deployments / Rollouts
+Questions:
+Deployment vs ReplicaSet?
+Rolling update flow?
+How rollback works?
+How do you avoid rollbacks?
+Blue/Green vs Canary?
+How to do zero downtime deployment?
+What is maxSurge/maxUnavailable?
+
+Strong answer:
+“We use canary + readiness probes + feature flags.”
+
+4. Networking (very important)
+6
+Questions:
+Why service needed?
+Why not pod IP?
+Types of services?
+ClusterIP vs NodePort vs LoadBalancer?
+What is headless service?
+kube-proxy role?
+iptables vs IPVS?
+How DNS works?
+Role of CoreDNS?
+Cross namespace communication?
+How pod-to-pod communication works?
+5. Ingress
+Questions:
+Ingress vs LoadBalancer?
+Why need Ingress controller?
+Explain TLS termination.
+Common ingress issues?
+502/504 debugging?
+Which controller used? (NGINX Ingress Controller, Traefik)
+6. Storage
+Questions:
+PV vs PVC?
+StorageClass?
+Dynamic provisioning?
+StatefulSet storage?
+RWX vs RWO?
+PVC pending troubleshooting?
+How DB runs in K8s?
+7. Config & Secrets
+Questions:
+ConfigMap vs Secret?
+Secret types?
+Why base64 not secure?
+Secret rotation?
+Have you used HashiCorp Vault?
+ConfigMap changed, app not updated — why?
+8. Security (senior favorite)
+Questions:
+RBAC explain.
+Role vs ClusterRole?
+ServiceAccount use?
+PodSecurity admission?
+NetworkPolicy?
+Restrict one app talking to DB?
+Image scanning?
+Runtime security tools?
+
+Mention tools:
+
+Falco
+Trivy
+9. Scaling
+Questions:
+HPA vs VPA?
+Cluster Autoscaler?
+Why HPA not scaling?
+Custom metrics scaling?
+KEDA used? KEDA
+10. Resources & QoS
+Questions:
+requests vs limits?
+OOMKilled?
+CPU throttling?
+QoS classes?
+Namespace quotas?
+11. Troubleshooting (most important)
+
+These are asked a lot:
+
+Pod issues:
+CrashLoopBackOff
+ImagePullBackOff
+Pending
+OOMKilled
+Node issues:
+Node NotReady
+Disk pressure
+Memory pressure
+Network:
+Service unreachable
+DNS failure
+ingress 502
