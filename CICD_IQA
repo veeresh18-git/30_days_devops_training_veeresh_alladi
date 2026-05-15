@@ -1,0 +1,59 @@
+name: Deploy Frontend & Backend to EKS
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ✅ AWS Auth (OIDC)
+      - name: Configure AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::262046511657:role/ksd-cicd-role
+          aws-region: ap-south-1
+
+      # ✅ Connect to EKS
+      - name: Update kubeconfig
+        run: |
+          aws eks update-kubeconfig --region ap-south-1 --name ksd-eks
+
+      # ✅ Deploy Backend (with version tag)
+      - name: Deploy Backend
+        run: |
+          helm upgrade --install premium-backend ./infra/helm-backend \
+            --set image.repository=${{ secrets.BACKEND_ECR_URI }} \
+            --set image.tag=${{ github.sha }}
+
+      # ✅ Wait for rollout
+      - name: Verify Backend
+        run: |
+          kubectl rollout status deployment/premium-backend -n default
+
+      # ✅ Deploy Frontend
+      - name: Deploy Frontend
+        run: |
+          helm upgrade --install premium-frontend ./infra/helm-frontend \
+            --set image.repository=${{ secrets.FRONT_ECR_URI }} \
+            --set image.tag=${{ github.sha }}
+
+      # ✅ Verify rollout
+      - name: Verify Frontend
+        run: |
+          kubectl rollout status deployment/premium-frontend -n default
+
+      # ✅ ✅ Auto rollback if failed
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          echo "Rolling back deployments..."
+          helm rollback premium-backend || true
+          helm rollback premium-frontend || true
+``
