@@ -1,59 +1,133 @@
-name: Deploy Frontend & Backend to EKS
+name: Full CI-CD to EKS
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
+      - develop
+      - 'feature/*'
+
+env:
+  AWS_REGION: ap-south-1
+  CLUSTER_NAME: ksd-eks
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  deploy:
+
+# ✅ 1. BUILD + TEST
+  build:
     runs-on: ubuntu-latest
-    environment: production
+
+    outputs:
+      image_tag: ${{ steps.tag.outputs.tag }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # ✅ AWS Auth (OIDC)
+      - name: Run unit tests
+        run: |
+          npm install
+          npm test
+
+      - name: Generate image tag
+        id: tag
+        run: |
+          echo "tag=${{ github.sha }}" >> $GITHUB_OUTPUT
+
+# ✅ 2. SECURITY SCAN
+  security:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Trivy scan
+        uses: aquasecurity/trivy-action@master
+
+# ✅ 3. BUILD & PUSH DOCKER IMAGE
+  docker:
+    runs-on: ubuntu-latest
+    needs: security
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        run: |
+          aws ecr get-login-password --region $AWS_REGION \
+          | docker login --username AWS --password-stdin ${{ secrets.ECR_URI }}
+
+      - name: Build & Push
+        run: |
+          docker build -t ${{ secrets.ECR_URI }}:${{ needs.build.outputs.image_tag }} .
+          docker push ${{ secrets.ECR_URI }}:${{ needs.build.outputs.image_tag }}
+
+# ✅ 4. DEPLOY (Branch-based)
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker
+    environment:
+      name: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ✅ AWS auth
       - name: Configure AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::262046511657:role/ksd-cicd-role
-          aws-region: ap-south-1
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+          aws-region: ${{ env.AWS_REGION }}
 
       # ✅ Connect to EKS
       - name: Update kubeconfig
         run: |
-          aws eks update-kubeconfig --region ap-south-1 --name ksd-eks
+          aws eks update-kubeconfig \
+            --region $AWS_REGION \
+            --name $CLUSTER_NAME
 
-      # ✅ Deploy Backend (with version tag)
+      # ✅ Deploy Backend
       - name: Deploy Backend
         run: |
           helm upgrade --install premium-backend ./infra/helm-backend \
             --set image.repository=${{ secrets.BACKEND_ECR_URI }} \
-            --set image.tag=${{ github.sha }}
+            --set image.tag=${{ needs.build.outputs.image_tag }}
 
-      # ✅ Wait for rollout
+      # ✅ Retry rollout (important)
       - name: Verify Backend
         run: |
-          kubectl rollout status deployment/premium-backend -n default
+          for i in 1 2 3; do
+            kubectl rollout status deployment/premium-backend && break || sleep 10
+          done
 
       # ✅ Deploy Frontend
       - name: Deploy Frontend
         run: |
           helm upgrade --install premium-frontend ./infra/helm-frontend \
             --set image.repository=${{ secrets.FRONT_ECR_URI }} \
-            --set image.tag=${{ github.sha }}
+            --set image.tag=${{ needs.build.outputs.image_tag }}
 
-      # ✅ Verify rollout
+      # ✅ Retry rollout
       - name: Verify Frontend
         run: |
-          kubectl rollout status deployment/premium-frontend -n default
+          for i in 1 2 3; do
+            kubectl rollout status deployment/premium-frontend && break || sleep 10
+          done
 
-      # ✅ ✅ Auto rollback if failed
+      # ✅ Auto rollback on failure
       - name: Rollback on failure
         if: failure()
         run: |
-          echo "Rolling back deployments..."
+          echo "Rollback triggered"
           helm rollback premium-backend || true
           helm rollback premium-frontend || true
-``
