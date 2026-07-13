@@ -746,6 +746,346 @@ rm -r Backup
 tree
 ```
 
+A great way to combine **Linux user management + Markdown + GitHub** is to ask each user to create their own notes and show that they **cannot access each other's files**.
+
+---
+
+# Hands-on Lab: user1 and user2 with README.md
+
+## Objective
+
+* Create two users
+* Each user creates their own `README.md`
+* Verify ownership
+* Demonstrate that one user cannot view the other's private file
+
+---
+
+## Step 1: Create Users (as root or with sudo)
+
+```bash
+sudo useradd -m user1
+sudo passwd user1
+
+sudo useradd -m user2
+sudo passwd user2
+```
+
+Verify:
+
+```bash
+cat /etc/passwd | grep user
+```
+
+Expected output:
+
+```text
+user1:x:1001:1001::/home/user1:/bin/bash
+user2:x:1002:1002::/home/user2:/bin/bash
+```
+
+---
+
+# Step 2: Login as user1
+
+```bash
+su - user1
+```
+
+Check:
+
+```bash
+whoami
+pwd
+```
+
+Output:
+
+```text
+user1
+/home/user1
+```
+
+---
+
+# Step 3: Create Project Folder
+
+```bash
+mkdir LinuxNotes
+cd LinuxNotes
+```
+
+---
+
+# Step 4: Create README.md
+
+```bash
+touch README.md
+```
+
+Edit it:
+
+```bash
+nano README.md
+```
+
+Add:
+
+```markdown
+# Linux Notes
+
+## Owner
+user1
+
+## Commands Learned
+
+- pwd
+- ls
+- mkdir
+- touch
+- chmod
+```
+
+Save:
+
+* Ctrl + O
+* Enter
+* Ctrl + X
+
+Verify:
+
+```bash
+cat README.md
+```
+
+---
+
+# Step 5: Check Permissions
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rw-r--r-- 1 user1 user1 README.md
+```
+
+Explain:
+
+```
+Owner  -> user1
+Group  -> user1
+Others -> Read
+```
+
+Ask students:
+
+> Can user2 read this file?
+
+**Yes**, because `Others` have read permission.
+
+---
+
+# Step 6: Make File Private
+
+```bash
+chmod 600 README.md
+```
+
+Check:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rw------- 1 user1 user1 README.md
+```
+
+Explain:
+
+```
+Owner  -> Read + Write
+Group  -> No Access
+Others -> No Access
+```
+
+---
+
+# Step 7: Logout
+
+```bash
+exit
+```
+
+---
+
+# Step 8: Login as user2
+
+```bash
+su - user2
+```
+
+Check:
+
+```bash
+whoami
+pwd
+```
+
+Output:
+
+```text
+user2
+/home/user2
+```
+
+---
+
+# Step 9: Try to Read user1's File
+
+```bash
+cat /home/user1/LinuxNotes/README.md
+```
+
+Output:
+
+```text
+cat: /home/user1/LinuxNotes/README.md: Permission denied
+```
+
+Explain:
+
+> Linux checks the owner and permissions. Since `user2` is neither the owner nor allowed by the permissions, access is denied.
+
+---
+
+# Step 10: Create user2's Own Notes
+
+```bash
+mkdir LinuxNotes
+cd LinuxNotes
+
+touch README.md
+
+nano README.md
+```
+
+Add:
+
+```markdown
+# Linux Notes
+
+## Owner
+user2
+
+## Commands Learned
+
+- cp
+- mv
+- rm
+- chmod
+- chown
+```
+
+Save and verify:
+
+```bash
+cat README.md
+```
+
+---
+
+# Step 11: Make user2's File Private
+
+```bash
+chmod 600 README.md
+```
+
+Check:
+
+```bash
+ls -l
+```
+
+Output:
+
+```text
+-rw------- 1 user2 user2 README.md
+```
+
+---
+
+# Step 12: Switch Back to user1
+
+```bash
+exit
+
+su - user1
+```
+
+Try:
+
+```bash
+cat /home/user2/LinuxNotes/README.md
+```
+
+Output:
+
+```text
+Permission denied
+```
+
+---
+
+# Final Verification
+
+As root (or with `sudo`), run:
+
+```bash
+ls -l /home/user1/LinuxNotes
+ls -l /home/user2/LinuxNotes
+```
+
+Example:
+
+```text
+-rw------- 1 user1 user1 README.md
+-rw------- 1 user2 user2 README.md
+```
+
+---
+
+# Discussion Questions
+
+Ask your students:
+
+1. Who owns the first `README.md`?
+2. Why couldn't `user2` read `user1`'s file?
+3. What does `chmod 600` do?
+4. What would happen if we changed it to `644`?
+5. Which permission controls access for "others"?
+
+---
+
+# Bonus Demonstration
+
+Change the permissions as `user1`:
+
+```bash
+chmod 644 README.md
+```
+
+Now switch to `user2` and try:
+
+```bash
+cat /home/user1/LinuxNotes/README.md
+```
+
 ---
 
 # End with One Easy Memory Trick
