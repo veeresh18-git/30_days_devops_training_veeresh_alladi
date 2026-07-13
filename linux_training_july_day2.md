@@ -3,18 +3,6 @@
 
 # Linux User Management 
 
-## Start with a Real-Life Example
-
-Ask them:
-
-> "In your company, does everyone have the same access?"
-
-They'll answer:
-
-**No**
-
-Then explain:
-
 Imagine EPAM has:
 
 * HR Team
@@ -352,9 +340,7 @@ groups developer
 
 ---
 
-# File Management (20–25 mins)
-
-Tell this story first.
+# File Management 
 
 Imagine your laptop.
 
@@ -697,8 +683,6 @@ Need live monitoring.
 ---
 
 # Complete Hands-on Lab 
-
-Tell students:
 
 Imagine you joined a company.
 
